@@ -44,31 +44,33 @@ class FeedFragment : Fragment(), OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize the favoriteItems list from SharedPreferences only once
+        if (favoriteItems.isEmpty()) {
+            favoriteItems.addAll(sharedPreferencesManager.getFavoriteItems())
+        }
+
+        // Initialize the apartmentModelArrayList only if it's empty
+        if (apartmentModelArrayList.isEmpty()) {
+            // Add your apartment data here
+            apartmentModelArrayList.add(ApartmentModel("65", "5000"))
+            apartmentModelArrayList.add(ApartmentModel("85", "6000"))
+            apartmentModelArrayList.add(ApartmentModel("77", "7000"))
+            apartmentModelArrayList.add(ApartmentModel("88", "8000"))
+            apartmentModelArrayList.add(ApartmentModel("90", "8000"))
+        }
+
+        // Initialize adapter if not initialized
+        if (!::apatmentdapter.isInitialized) {
+            apatmentdapter = Apatmentdapter(this, apartmentModelArrayList, this)
+        }
+
+        // Set up RecyclerView
         val adRV = view.findViewById<RecyclerView>(R.id.rcId)
-
-        favoriteItems.addAll(sharedPreferencesManager.getFavoriteItems())
-
-        // Here, we have created new array list and added data to it
-        apartmentModelArrayList.add(ApartmentModel("65", "5000"))
-        apartmentModelArrayList.add(ApartmentModel("85", "6000"))
-        apartmentModelArrayList.add(ApartmentModel("77", "7000"))
-        apartmentModelArrayList.add(ApartmentModel("88", "8000"))
-        apartmentModelArrayList.add(ApartmentModel("90", "8000"))
-
-        apatmentdapter = Apatmentdapter(this, apartmentModelArrayList, this)
-
         adRV.layoutManager = LinearLayoutManager(requireContext())
-
         adRV.adapter = apatmentdapter
 
-        binding.myListOfFlatsButton.setOnClickListener {
-            findNavController().navigate(R.id.action_feed_to_favoritFlat)
-        }
-
-        binding.addFlatButtonId.setOnClickListener {
-            findNavController().navigate(R.id.feed_to_add_flat)
-        }
-
+        // Set up click listeners
         binding.myListOfFlatsButton.setOnClickListener {
             val bundle = Bundle().apply {
                 putParcelableArrayList("favoriteItems", favoriteItems)
@@ -76,44 +78,30 @@ class FeedFragment : Fragment(), OnItemClickListener {
             findNavController().navigate(R.id.action_feed_to_favoritFlat, bundle)
         }
 
-
+        binding.addFlatButtonId.setOnClickListener {
+            findNavController().navigate(R.id.feed_to_add_flat)
+        }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
 
     override fun onItemClick(position: Int) {
         val clickedItem = apartmentModelArrayList[position]
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Thank you for your feedback!")
-            .setMessage("We will review it carefully")
-        builder.create().show()
-        val favoriteItems: ArrayList<ApartmentModel> = ArrayList()
-        favoriteItems.add(clickedItem)
+        // Show your dialog here
     }
 
     override fun onUnlikeClick(position: Int) {
-        apartmentModelArrayList.removeAt(position)
         val removedItem = apartmentModelArrayList.removeAt(position)
-        // Notify the adapter that an item has been removed
         apatmentdapter.notifyItemRemoved(position)
         favoriteItems.remove(removedItem)
         sharedPreferencesManager.saveFavoriteItems(favoriteItems)
-
     }
 
     override fun onLikeClick(position: Int) {
         val clickedItem = apartmentModelArrayList[position]
-        val builder = AlertDialog.Builder(requireContext())
         favoriteItems.add(clickedItem)
         sharedPreferencesManager.saveFavoriteItems(favoriteItems)
         apartmentModelArrayList.removeAt(position)
         apatmentdapter.notifyItemRemoved(position)
-        builder.setTitle("This flat was added to your favorite flat list")
-        builder.create().show()
+        // Show your dialog here
     }
 
     override fun onAddFlatClick() {
