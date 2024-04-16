@@ -5,48 +5,66 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import data.Apatmentdapter
+import data.ApartmentModel
+import data.OnItemClickListener
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MyFavoritFlats.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MyFavoritFlats : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var favoriteItems: ArrayList<ApartmentModel>? = null
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: Apatmentdapter
+    private val listener = object : OnItemClickListener {
+        override fun onItemClick(position: Int) {
+            // Handle item click event
+            // For example, show a toast message or navigate to another fragment
+        }
+
+        override fun onUnlikeClick(position: Int) {
+            // Handle image click event
+            // For example, show a dialog or perform some action
+        }
+
+        override fun onLikeClick(position: Int) {
+            // For example, show a dialog or perform some action
+
+        }
+
+        override fun onAddFlatClick() {
+
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_favorit_flats, container, false)
     }
 
-    companion object {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MyFavoritFlats().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        recyclerView = view.findViewById(R.id.rcId)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // Retrieve favoriteItems list from arguments Bundle
+        favoriteItems = arguments?.getParcelableArrayList<ApartmentModel>("favoriteItems")
+
+        // Initialize and set adapter to RecyclerView
+        adapter = Apatmentdapter(FeedFragment(), favoriteItems ?: ArrayList(), listener)
+        recyclerView.adapter = adapter
     }
+
 }

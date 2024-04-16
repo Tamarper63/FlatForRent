@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.flateforrentdemo.R
 import com.example.flateforrentdemo.FeedFragment
 
-class AdAdapter(
+class Apatmentdapter(
     private val context: FeedFragment,
-    private val addModelArrayList: ArrayList<AdModel>,
+    private val addModelArrayList: ArrayList<ApartmentModel>,
     private val listener: OnItemClickListener
 ) :
-    RecyclerView.Adapter<AdAdapter.ViewHolder>() {
+    RecyclerView.Adapter<Apatmentdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // to inflate the layout for each item of recycler view.
@@ -26,7 +26,7 @@ class AdAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // to set data to textview and imageview of each card layout
-        val model: AdModel = addModelArrayList[position]
+        val model: ApartmentModel = addModelArrayList[position]
         holder.flatid.setText("Flat ID " + model.getFlatId())
         holder.flatPrice.setText("Price " + model.getFlatPrice())
     }
@@ -56,7 +56,7 @@ class AdAdapter(
             if (position != RecyclerView.NO_POSITION) {
                 // Check which view was clicked
                 when (v?.id) {
-                    R.id.myButton -> listener.onImageClick(position) // Button clicked
+                    R.id.myButton -> listener.onUnlikeClick(position) // Button clicked
                     R.id.unLike -> listener.onItemClick(position) // unLike view clicked
                     R.id.starId -> listener.onLikeClick(position) // unLike view clicked
                 }

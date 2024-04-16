@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:padding="16dp">
+    android:padding="20dp">
 
     <ImageView
         android:id="@+id/messIcon"
         android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="i"
         android:src="@drawable/email"
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="-15dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_marginBottom="16dp"
         android:text="Find your next flat"
         android:textSize="25dp"
@@ -38,9 +38,9 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:contentDescription=""
-        android:src="@drawable/advocate"
+        android:src="@drawable/icons8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,21 +48,32 @@
         android:id="@+id/rcId"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:paddingTop="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleTextView" />
 
     <Button
-        android:id="@+id/bottomButton"
+        android:id="@+id/my_list_of_flats_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My list of Flats"
+        android:backgroundTint="@color/your_color"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
+        app:layout_constraintEnd_toStartOf="@id/addFlatButtonId"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/addFlatButtonId"
+        android:backgroundTint="@color/your_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add new Flat"
+        android:layout_marginStart="6dp"
+        android:layout_marginRight="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/my_list_of_flats_button"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

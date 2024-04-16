@@ -28,6 +28,11 @@
         <action
             android:id="@+id/action_feed_to_favoritFlat"
             app:destination="@id/MyFavoritFlats" />
+
+        <action
+            android:id="@+id/feed_to_add_flat"
+            app:destination="@id/AddFlatFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/MyFavoritFlats"
@@ -35,6 +40,17 @@
         android:label="@string/hello_blank_fragment"
         tools:layout="@layout/fragment_my_favorit_flats">
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/AddFlatFragment"
+        android:name="com.example.flateforrentdemo.AddNewFlatFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_add_new_flat">
+
+        <action
+            android:id="@+id/feed_to_add_new_flat"
+            app:destination="@id/FirstFragment" />
 
     </fragment>
 </navigation>

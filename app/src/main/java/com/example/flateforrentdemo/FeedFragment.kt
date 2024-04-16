@@ -10,9 +10,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flateforrentdemo.databinding.FragmentSecondBinding
-import data.AdAdapter
-import data.AdModel
+import data.Apatmentdapter
+import data.ApartmentModel
 import data.OnItemClickListener
+import db.SharedPreferencesManager
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -20,8 +21,11 @@ import data.OnItemClickListener
 class FeedFragment : Fragment(), OnItemClickListener {
 
     private var _binding: FragmentSecondBinding? = null
-    val adModelArrayList: ArrayList<AdModel> = ArrayList()
-    private lateinit var adAdapter: AdAdapter // Declare adAdapter as a class-level variable
+    val apartmentModelArrayList: ArrayList<ApartmentModel> = ArrayList()
+    private lateinit var apatmentdapter: Apatmentdapter // Declare adAdapter as a class-level variable
+    private var favoriteItems: ArrayList<ApartmentModel> = ArrayList()
+    private lateinit var sharedPreferencesManager: SharedPreferencesManager
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -34,13 +38,7 @@ class FeedFragment : Fragment(), OnItemClickListener {
         // Inflate the layout XML file for FragmentSecondBinding
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
 
-        // Access views from FragmentSecondBinding
-
-
-        // Inflate the layout XML file containing the unLike button
-        val otherLayout = inflater.inflate(R.layout.item_card_view, container, false)
-
-
+        sharedPreferencesManager = SharedPreferencesManager(requireContext())
         return binding.root
     }
 
@@ -48,22 +46,36 @@ class FeedFragment : Fragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         val adRV = view.findViewById<RecyclerView>(R.id.rcId)
 
-        // Here, we have created new array list and added data to it
-        adModelArrayList.add(AdModel("65", "5000"))
-        adModelArrayList.add(AdModel("85", "6000"))
-        adModelArrayList.add(AdModel("77", "7000"))
-        adModelArrayList.add(AdModel("88", "8000"))
-        adModelArrayList.add(AdModel("90", "8000"))
+        favoriteItems.addAll(sharedPreferencesManager.getFavoriteItems())
 
-        adAdapter = AdAdapter(this, adModelArrayList, this)
+        // Here, we have created new array list and added data to it
+        apartmentModelArrayList.add(ApartmentModel("65", "5000"))
+        apartmentModelArrayList.add(ApartmentModel("85", "6000"))
+        apartmentModelArrayList.add(ApartmentModel("77", "7000"))
+        apartmentModelArrayList.add(ApartmentModel("88", "8000"))
+        apartmentModelArrayList.add(ApartmentModel("90", "8000"))
+
+        apatmentdapter = Apatmentdapter(this, apartmentModelArrayList, this)
 
         adRV.layoutManager = LinearLayoutManager(requireContext())
 
-        adRV.adapter = adAdapter
+        adRV.adapter = apatmentdapter
 
-        binding.bottomButton.setOnClickListener {
+        binding.myListOfFlatsButton.setOnClickListener {
             findNavController().navigate(R.id.action_feed_to_favoritFlat)
         }
+
+        binding.addFlatButtonId.setOnClickListener {
+            findNavController().navigate(R.id.feed_to_add_flat)
+        }
+
+        binding.myListOfFlatsButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putParcelableArrayList("favoriteItems", favoriteItems)
+            }
+            findNavController().navigate(R.id.action_feed_to_favoritFlat, bundle)
+        }
+
 
     }
 
@@ -74,29 +86,37 @@ class FeedFragment : Fragment(), OnItemClickListener {
 
 
     override fun onItemClick(position: Int) {
-        val clickedItem = adModelArrayList[position]
+        val clickedItem = apartmentModelArrayList[position]
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Thank you for your feedback!")
             .setMessage("We will review it carefully")
         builder.create().show()
-        val favoriteItems: ArrayList<AdModel> = ArrayList()
+        val favoriteItems: ArrayList<ApartmentModel> = ArrayList()
         favoriteItems.add(clickedItem)
     }
 
-    override fun onImageClick(position: Int) {
-        adModelArrayList.removeAt(position)
-
+    override fun onUnlikeClick(position: Int) {
+        apartmentModelArrayList.removeAt(position)
+        val removedItem = apartmentModelArrayList.removeAt(position)
         // Notify the adapter that an item has been removed
-        adAdapter.notifyItemRemoved(position)
+        apatmentdapter.notifyItemRemoved(position)
+        favoriteItems.remove(removedItem)
+        sharedPreferencesManager.saveFavoriteItems(favoriteItems)
+
     }
 
     override fun onLikeClick(position: Int) {
-        val clickedItem = adModelArrayList[position]
+        val clickedItem = apartmentModelArrayList[position]
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("This flat was added to your flats list")
-        builder.create().show()
-        val favoriteItems: ArrayList<AdModel> = ArrayList()
         favoriteItems.add(clickedItem)
+        sharedPreferencesManager.saveFavoriteItems(favoriteItems)
+        apartmentModelArrayList.removeAt(position)
+        apatmentdapter.notifyItemRemoved(position)
+        builder.setTitle("This flat was added to your favorite flat list")
+        builder.create().show()
     }
 
+    override fun onAddFlatClick() {
+        TODO("Not yet implemented")
+    }
 }
