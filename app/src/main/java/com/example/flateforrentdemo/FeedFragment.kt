@@ -27,8 +27,6 @@ class FeedFragment : Fragment(), OnItemClickListener {
     private lateinit var sharedPreferencesManager: SharedPreferencesManager
 
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -50,9 +48,11 @@ class FeedFragment : Fragment(), OnItemClickListener {
             favoriteItems.addAll(sharedPreferencesManager.getFavoriteItems())
         }
 
-        // Initialize the apartmentModelArrayList only if it's empty
+        if (!::apatmentdapter.isInitialized) {
+            apatmentdapter = Apatmentdapter(this, apartmentModelArrayList, this)
+        }
+
         if (apartmentModelArrayList.isEmpty()) {
-            // Add your apartment data here
             apartmentModelArrayList.add(ApartmentModel("65", "5000"))
             apartmentModelArrayList.add(ApartmentModel("85", "6000"))
             apartmentModelArrayList.add(ApartmentModel("77", "7000"))
@@ -81,7 +81,17 @@ class FeedFragment : Fragment(), OnItemClickListener {
         binding.addFlatButtonId.setOnClickListener {
             findNavController().navigate(R.id.feed_to_add_flat)
         }
+
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+        // Save apartment list to SharedPreferences when fragment is destroyed
+        sharedPreferencesManager.saveApartmentList(apartmentModelArrayList)
+    }
+
 
     override fun onItemClick(position: Int) {
         val clickedItem = apartmentModelArrayList[position]
@@ -93,15 +103,16 @@ class FeedFragment : Fragment(), OnItemClickListener {
         apatmentdapter.notifyItemRemoved(position)
         favoriteItems.remove(removedItem)
         sharedPreferencesManager.saveFavoriteItems(favoriteItems)
+        sharedPreferencesManager.saveApartmentList(apartmentModelArrayList)
     }
 
     override fun onLikeClick(position: Int) {
         val clickedItem = apartmentModelArrayList[position]
         favoriteItems.add(clickedItem)
-        sharedPreferencesManager.saveFavoriteItems(favoriteItems)
-        apartmentModelArrayList.removeAt(position)
+        apartmentModelArrayList.remove(clickedItem)
         apatmentdapter.notifyItemRemoved(position)
-        // Show your dialog here
+        sharedPreferencesManager.saveFavoriteItems(favoriteItems)
+        sharedPreferencesManager.saveApartmentList(apartmentModelArrayList)
     }
 
     override fun onAddFlatClick() {
